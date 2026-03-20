@@ -27,10 +27,18 @@ class ReportExporter:
             f.write("\n")
             
             f.write("## 2. Results Summary\n\n")
-            for key, df in self.context.data.items():
+            for key, data in self.context.data.items():
                 if key == "raw_data": continue
                 f.write(f"### {key}\n")
-                f.write(df.head(20).to_markdown())
+                
+                if isinstance(data, pd.DataFrame):
+                    f.write(data.head(20).to_markdown())
+                elif isinstance(data, dict):
+                    for k, v in data.items():
+                        f.write(f"- **{k}**: {v}\n")
+                else:
+                    f.write(str(data))
+                    
                 f.write("\n\n")
         
         print(f"Report exported to: {output_path}")
